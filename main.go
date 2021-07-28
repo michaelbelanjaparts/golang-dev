@@ -17,7 +17,9 @@ func main() {
 	route := Router(handlers)
 
 	log.Printf("[SERVER] starting in port : %v", os.Getenv("SERVER_PORT"))
-	if err := http.ListenAndServe(":"+os.Getenv("SERVER_PORT"), route); err != nil {
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	http.Handle("/", route)
+	if err := http.ListenAndServe(":"+os.Getenv("SERVER_PORT"), nil); err != nil {
 		panic(err)
 	}
 }
@@ -27,9 +29,9 @@ func Router(handlers handler.Handlers) http.Handler {
 	router.Group(func(r chi.Router) {
 		r.Get("/", handlers.GetAllHandlers)
 		r.Get("/read", handlers.GetAllHandlers)
-		r.Get("/create", handlers.InsertDataHandler)
-		r.Get("/update", handlers.EditDataHandler)
-		r.Get("/delete", handlers.DeleteDataHandler)
+		r.Post("/create", handlers.InsertDataHandler)
+		r.Put("/update", handlers.EditDataHandler)
+		r.Delete("/delete", handlers.DeleteDataHandler)
 	})
 	return router
 }

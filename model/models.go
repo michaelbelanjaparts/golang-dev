@@ -26,3 +26,8 @@ type ArtistEntity struct {
 	SampleURL string          `db:"sample_url"`
 	Price     sql.NullFloat64 `db:"price"`
 }
+
+type PeekImageData struct {
+	Headers interface{} `json:"headers"`
+	Image   interface{} `json:"image"`
+}

@@ -2,8 +2,12 @@ package usecase
 
 import (
 	"database/sql"
+	"fmt"
 	"golang-dev/model"
 	"golang-dev/repository"
+	"io"
+	"mime/multipart"
+	"os"
 )
 
 func GetAllArtist(db *sql.DB) (res []model.ArtistViewModel, err error) {
@@ -27,4 +31,17 @@ func GetAllArtist(db *sql.DB) (res []model.ArtistViewModel, err error) {
 	}
 
 	return res, err
+}
+
+func InsertArtist(db *sql.DB, img multipart.File, filename string) (err error) {
+	image, err := os.OpenFile("static/images/"+filename, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Printf("Error OpenFile %v", err)
+		return err
+	}
+
+	defer image.Close()
+	io.Copy(image, img)
+
+	return err
 }
