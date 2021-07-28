@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/go-chi/chi"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -17,8 +18,9 @@ func main() {
 	route := Router(handlers)
 
 	log.Printf("[SERVER] starting in port : %v", os.Getenv("SERVER_PORT"))
-	http.Handle("/", route)
+	http.Handle("/", cors.AllowAll().Handler(route))
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	if err := http.ListenAndServe(":"+os.Getenv("SERVER_PORT"), nil); err != nil {
 		panic(err)
 	}
